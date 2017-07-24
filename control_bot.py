@@ -109,9 +109,9 @@ class control:
 			user1 = self.msg['reply_to_message']['from']['first_name']
 			user_id = self.msg['from']['id']
 			reply_id = self.msg['reply_to_message']['from']['id']
-			admins = self.bot.getChatAdministrators(chat_id)
+			admins = self.bot.getChatAdministrators(self.chat_id)
 			adm_list = [adm['user']['id'] for adm in admins]
-			advs = int(sql.procurar(chat_id, user)[1])
+			advs = int(sql.procurar(self.chat_id, user)[1])
 
 			if (user_id in adm_list):
 				if reply_id not in adm_list:
@@ -134,12 +134,12 @@ class control:
 			user1 = self.msg['reply_to_message']['from']['first_name']
 			user_id = self.msg['from']['id']
 			reply_id = self.msg['reply_to_message']['from']['id']
-			admins = self.bot.getChatAdministrators(chat_id)
+			admins = self.bot.getChatAdministrators(self.chat_id)
 			adm_list = [adm['user']['id'] for adm in admins]
 
 			if (user_id in adm_list):
 				if reply_id not in adm_list:
-					self.bot.sendMessage(chat_id,'*{}* batizado.'.format(user1), parse_mode='Markdown')
+					self.bot.sendMessage(self.chat_id,'*{}* batizado.'.format(user1), parse_mode='Markdown')
 					sql.delete(self.chat_id, user)
 					sql.inserir(self.chat_id, user)
 				else:
@@ -206,7 +206,7 @@ class control:
 				text = self.text.replace("/welcome ", "")
 
 				with open('welcome.txt', 'w') as welcome:
-					welcome.write(self.text)
+					welcome.write(text)
 
 				self.bot.sendMessage(self.chat_id, "As mensagens de boas-vindas foram alteradas com sucesso!")
 			else:
