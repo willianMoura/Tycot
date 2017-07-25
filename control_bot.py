@@ -1,12 +1,12 @@
-import telepot, logging, sql
+import telepot
+import logging
+import sql
 from datetime import datetime
-
 
 
 class control:
 
 	day_date_hour = datetime.now().strftime('%c')
-
 
 
 	def __init__(self, msg, bot):
@@ -29,12 +29,7 @@ class control:
 		except:
 			self.text = ''
 
-		self.log()
-		self.commands()
-		self.goodbye()
-		self.rules()
-		self.welcome()
-
+		
 
 	def commands(self):
 
@@ -59,7 +54,7 @@ class control:
 
 					info_chat = self.msg['chat']['title']
 
-					self.bot.sendMessage(chat_id=self.user_id, parse_mode='Markdown',rext='*ID INFO*\n`NOME`: {0}\n`ID`: {1}\n`NOME DO GRUPO`: {2}\n`ID GROUP`: {3}'.format(self.user, self.user_id, info_chat, self.chat_id))
+					self.bot.sendMessage(chat_id=self.user_id, parse_mode='Markdown',text='*ID INFO*\n`NOME`: {0}\n`ID`: {1}\n`NOME DO GRUPO`: {2}\n`ID GROUP`: {3}'.format(self.user, self.user_id, info_chat, self.chat_id))
 
 			if(self.text.startswith('/link')):
 				self.bot.sendMessage(self.user_id, parse_mode='Markdown', text='[Pygrameiros](https://t.me/joinchat/AAAAAEOnjcIiD2WH_TD8Vg)')
@@ -78,7 +73,7 @@ class control:
 
 		except:
 			self.bot.sendMessage(self.chat_id, 'Por favor, inicie uma conversa comigo e tente novamente.')
-			print('')
+
 		if(self.text.startswith('/leave')):
             
 			self.bot.sendMessage(self.chat_id, "Tem certeza que deseja sair do grupo?\nEnvie 'sim' ou 'não'.")
