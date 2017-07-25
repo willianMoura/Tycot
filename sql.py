@@ -98,6 +98,23 @@ WHERE nome = '{nome}';
 		return 'erro ao alterar'
 	conn.close
 
+def desadvertir(table, nome, quantidade):
+
+	conn = sqlite3.connect(db)
+	cursor = conn.cursor()
+	try:
+		advs = procurar(table, nome)[1]
+		cursor.execute("""UPDATE {table}
+SET nome = '{nome}',
+advs = {advs} 
+WHERE nome = '{nome}'; """.format(table=str(table).replace('-', 'T'), nome=nome, advs=advs-quantidade))
+		conn.commit()
+		return 'alterado'
+	except:
+		return 'erro ao alterar'
+	conn.close()
+
+
 def tabelas():
 
 	conn = sqlite3.connect(db)

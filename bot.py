@@ -8,7 +8,7 @@ bot = telepot.Bot(TOKEN)
 
 def handle(msg):
     control(msg, bot)
-
+    print(bot.getChat(telepot.glance(msg)[2]))
 
 bot.message_loop(handle)
 

@@ -115,7 +115,7 @@ class control:
 
 			if (user_id in adm_list):
 				if reply_id not in adm_list:
-					self.bot.sendMessage(self.chat_id,'*{user}* advertido, *{user}* possui {advs} advertencias.'.format(user=user1, advs=advs+1), parse_mode="Markdown")
+					self.bot.sendMessage(self.chat_id,'{user} *has been warned* ({advs}/3).'.format(user=user1, advs=advs+1), parse_mode="Markdown")
 					sql.advertir(self.chat_id, user)
 					if advs >= 3:
 						self.bot.sendMessage(self.chat_id, '*{}* expulso por atingir o limite de advertencias.'.format(user1), parse_mode="Markdown")
@@ -136,12 +136,12 @@ class control:
 			reply_id = self.msg['reply_to_message']['from']['id']
 			admins = self.bot.getChatAdministrators(self.chat_id)
 			adm_list = [adm['user']['id'] for adm in admins]
+			advs = int(sql.procurar(self.chat_id, user)[1])
 
 			if (user_id in adm_list):
 				if reply_id not in adm_list:
 					self.bot.sendMessage(self.chat_id,'*{}* batizado.'.format(user1), parse_mode='Markdown')
-					sql.delete(self.chat_id, user)
-					sql.inserir(self.chat_id, user)
+					sql.desadvertir(self.chat_id, user, advs-1)
 				else:
 					self.bot.sendMessage(self.chat_id,'administradores não possuem advertencias.')
 
