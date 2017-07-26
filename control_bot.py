@@ -2,6 +2,7 @@ import telepot
 import logging
 import sql
 from datetime import datetime
+from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 class control:
@@ -33,20 +34,20 @@ class control:
 
 	def commands(self):
 
-		if(self.chat_type == 'private'):
+		if self.chat_type == 'private':
 
-			if(self.text.startswith('/start')):
+			if self.text.startswith('/start'):
 				self.bot.sendMessage(self.chat_id, ('Olá, eu sou o Tycot!\nFui criado pela galera do Pygrameiros para te ajudar a administrar teu grupo!'))
 			self.log()
             
-		elif (self.text.startswith('/start')):
+		elif self.text.startswith('/start'):
 			self.bot.sendMessage(self.chat_id, ("Oi! Por favor, inicie uma conversa privada."
                                                 " Bots funcionam apenas desta forma."))
 			self.log()
 
         
 		try:
-			if(self.text.startswith('/info')):
+			if self.text.startswith('/info'):
 				if self.chat_type == 'private':
                     
 					self.bot.sendMessage(chat_id=self.chat_id, parse_mode='Markdown', text='''*ID INFO*\n`NOME`: {0}\n`ID`: {1}'''.format(self.user, self.user_id))
@@ -56,11 +57,11 @@ class control:
 
 					self.bot.sendMessage(chat_id=self.user_id, parse_mode='Markdown',text='*ID INFO*\n`NOME`: {0}\n`ID`: {1}\n`NOME DO GRUPO`: {2}\n`ID GROUP`: {3}'.format(self.user, self.user_id, info_chat, self.chat_id))
 
-			if(self.text.startswith('/link')):
+			if self.text.startswith('/link'):
 				self.bot.sendMessage(self.user_id, parse_mode='Markdown', text='[Pygrameiros](https://t.me/joinchat/AAAAAEOnjcIiD2WH_TD8Vg)')
 				self.log()
 
-			if(self.text.startswith('/ajuda')):
+			if self.text.startswith('/ajuda'):
 				self.bot.sendMessage(self.user_id, ('''
 							Olá, sou o Tycot!
 							Segue minha lista de comandos:
@@ -74,7 +75,7 @@ class control:
 		except:
 			self.bot.sendMessage(self.chat_id, 'Por favor, inicie uma conversa comigo e tente novamente.')
 
-		if(self.text.startswith('/leave')):
+		if self.text.startswith('/leave'):
             
 			self.bot.sendMessage(self.chat_id, "Tem certeza que deseja sair do grupo?\nEnvie 'sim' ou 'não'.")
             
@@ -99,22 +100,21 @@ class control:
 			else:
 				self.bot.sendMessage(self.chat_id, 'Apenas administradores podem usar este comando.')
     
-		elif(self.text.startswith('/warn')):
+		#warn falta alguns ajustes ainda.
+		if self.text.startswith('/warn'):
 			user = self.msg['reply_to_message']['from']['username']
-			user1 = self.msg['reply_to_message']['from']['first_name']
-			user_id = self.msg['from']['id']
-			reply_id = self.msg['reply_to_message']['from']['id']
-			admins = self.bot.getChatAdministrators(self.chat_id)
-			adm_list = [adm['user']['id'] for adm in admins]
+			self.user_reply_id = self.msg['reply_to_message']['from']['id'] #Esse valor será usado para remover o warn pelo botão tbm na função keyboard que irar retornar o id quando pressionado...
 			advs = int(sql.procurar(self.chat_id, user)[1])
+			user1 = self.msg['reply_to_message']['from']['first_name']
 
-			if (user_id in adm_list):
-				if reply_id not in adm_list:
-					self.bot.sendMessage(self.chat_id,'{user} *has been warned* ({advs}/3).'.format(user=user1, advs=advs+1), parse_mode="Markdown")
+			if (self.user_id in self.adm_list):
+    				
+				if self.user_reply_id not in self.adm_list:
+					self.bot.sendMessage(self.chat_id,'{user} *has been warned* ({advs}/3).'.format(user=user1, advs=advs+1), parse_mode="Markdown", reply_markup=self.keyboard())
 					sql.advertir(self.chat_id, user)
 					if advs >= 3:
 						self.bot.sendMessage(self.chat_id, '*{}* expulso por atingir o limite de advertencias.'.format(user1), parse_mode="Markdown")
-						self.bot.kickChatMember(self.chat_id, reply_id)
+						self.bot.kickChatMember(self.chat_id, self.user_reply_id)
 						sql.delete(self.chat_id, user)
 					else:
 						pass
@@ -124,17 +124,17 @@ class control:
 			else:
 				self.bot.sendMessage(self.chat_id, 'Apenas administradores podem usar este comando.')
 
-		elif(self.text.startswith('/unwarn')):
+		#warn falta alguns ajustes ainda
+		if (self.text.startswith('/unwarn')): #or (self.msg['data'] == 'removewarn'):
+
 			user = self.msg['reply_to_message']['from']['username']
 			user1 = self.msg['reply_to_message']['from']['first_name']
-			user_id = self.msg['from']['id']
-			reply_id = self.msg['reply_to_message']['from']['id']
-			admins = self.bot.getChatAdministrators(self.chat_id)
-			adm_list = [adm['user']['id'] for adm in admins]
+			self.user_reply_id = self.msg['reply_to_message']['from']['id']
 			advs = int(sql.procurar(self.chat_id, user)[1])
 
-			if (user_id in adm_list):
-				if reply_id not in adm_list:
+			if self.user_id in self.adm_list:
+						
+				if self.user_reply_id not in self.adm_list:
 					self.bot.sendMessage(self.chat_id,'*{}* batizado.'.format(user1), parse_mode='Markdown')
 					sql.desadvertir(self.chat_id, user, advs-1)
 				else:
@@ -142,6 +142,7 @@ class control:
 
 			else:
 				self.bot.sendMessage(self.chat_id, 'você ainda não pode batizar alguém, torne-se padre antes.')
+
 
 	def log(self):
 
@@ -201,7 +202,7 @@ class control:
 				text = self.text.replace("/welcome ", "")
 
 				with open('welcome.txt', 'w') as welcome:
-					welcome.write(text)
+					welcome.write(text[1])
 
 				self.bot.sendMessage(self.chat_id, "As mensagens de boas-vindas foram alteradas com sucesso!")
 			else:
@@ -220,6 +221,14 @@ class control:
                     
 				with open('welcome.txt', 'r') as welcome:
 					welcome = welcome.read()
-					welcome = welcome.replace("$name", user_first_name)
+					welcome = welcome.replace('$name', user_first_name)
 					self.bot.sendMessage(self.chat_id, welcome)
 					sql.inserir(self.chat_id, self.msg['new_chat_member']['username'])
+
+
+	def keyboard(self):
+
+		if self.text == '/warn': 
+			return InlineKeyboardMarkup(inline_keyboard=[
+                            [InlineKeyboardButton(text="Remove warn", callback_data='d')]
+                    ])
