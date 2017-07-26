@@ -77,8 +77,8 @@ def procurar(table, nome):
 			advs = busca[1]
 		cadastro = [user, advs]
 		return cadastro
-	except:
-		return 'erro ao buscar'
+	except (TypeError, RuntimeError, ValueError):
+		print('')
 	conn.close()
 
 def advertir(table, nome):
