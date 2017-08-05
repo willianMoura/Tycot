@@ -1,1 +1,1 @@
-/welcome ola $name
+$name oi
