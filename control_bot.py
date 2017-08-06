@@ -95,7 +95,10 @@ class control:
 				if reply_id not in adm_list:
 					self.bot.sendMessage(self.chat_id, "*{user}* foi retirado do grupo.".format(user), parse_mode="Markdown")
 					self.bot.kickChatMember(self.chat_id, reply_id)
-					sql.delete(self.chat_id, reply_id)
+					try:
+						sql.delete(self.chat_id, reply_id)
+					except:
+						pass
 				else:
 					self.bot.sendMessage(self.chat_id, '*{}* é um dos administradores. Não posso remover administradores.'.format(user), parse_mode="Markdown")
 			else:
@@ -105,7 +108,11 @@ class control:
 		if self.text.startswith('/warn'):
 			user = self.msg['reply_to_message']['from']['username']
 			self.user_reply_id = self.msg['reply_to_message']['from']['id'] #Esse valor será usado para remover o warn pelo botão tbm na função keyboard que irar retornar o id quando pressionado...
-			advs = int(sql.procurar(self.chat_id, self.user_reply_id)[1])
+			try:
+				advs = int(sql.procurar(self.chat_id, self.user_reply_id)[1])
+			except:
+				sql.inserir(self.chat_id, self.user_reply_id)
+				advs = int(sql.procurar(self.chat_id, self.user_reply_id)[1])
 			user1 = self.msg['reply_to_message']['from']['first_name']
 
 			if (self.user_id in self.adm_list):
@@ -131,7 +138,10 @@ class control:
 			user = self.msg['reply_to_message']['from']['username']
 			user1 = self.msg['reply_to_message']['from']['first_name']
 			self.user_reply_id = self.msg['reply_to_message']['from']['id']
-			advs = int(sql.procurar(self.chat_id, self.user_reply_id)[1])
+			try:
+				advs = int(sql.procurar(self.chat_id, self.user_reply_id)[1])
+			except:
+				pass
 
 			if self.user_id in self.adm_list:
 						
@@ -236,6 +246,11 @@ class control:
 
 
 	def add(self):
+
+		if self.text.startswith('/addb'):
+			sql.criar_table(self.chat_id)
+
+
 		if sql.procurar(self.chat_id, self.msg['from']['id']) == 'erro ao procurar':
 			sql.inserir(self.chat_id, self.msg['from']['id'])
 		else:
