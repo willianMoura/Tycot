@@ -249,7 +249,7 @@ class control:
 
 		if self.text.startswith('/addb'):
 			sql.criar_table(self.chat_id)
-
+			self.bot.sendMessage(self.chat_id, 'DB criado.')
 
 		if sql.procurar(self.chat_id, self.msg['from']['id']) == 'erro ao procurar':
 			sql.inserir(self.chat_id, self.msg['from']['id'])
