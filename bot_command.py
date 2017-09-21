@@ -4,8 +4,6 @@ from decorators import *
 import sql
 import telepot
 import random
-import time
-from datetime import datetime
 
 try:
 	from bs4 import BeautifulSoup
@@ -227,8 +225,6 @@ class command_user(control, keyboard):
 			)
 		)
 
-
-
 class command_admin(control, keyboard):
 	@admin
 	def ban(self):
@@ -272,7 +268,7 @@ class command_admin(control, keyboard):
 			sql.advertir(self.chat_id, user_reply_id)
 			self.bot.sendMessage(
 				self.chat_id,
-				'{user} <b>Foi advertido.</b> ({advs}/3).'.format(
+				'{user} <b>has been warned</b> ({advs}/3).'.format(
 					user=first_name_reply,
 					advs=advs + 1
 				),

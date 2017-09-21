@@ -4,9 +4,8 @@ import sys
 from control_bot import control
 from bot_command import *
 from time import time, sleep
-from datetime import datetime
+from datetime import date
 from keyboard import keyboard
-import time
 try:
 	import schedule
 except:
@@ -33,7 +32,6 @@ def msgDia():
 		'https://media.giphy.com/media/W4IY7zQdRh7Ow/giphy.gif')
 
 def handle(msg):
-<<<<<<< HEAD
 	main = control(msg, bot)
 	inst_command_user = command_user(msg=msg, bot=bot)
 	inst_command_admin = command_admin(msg=msg, bot=bot)
@@ -50,6 +48,7 @@ def handle(msg):
 			inst_command_user.verify_book()	
 		else:
 			pass
+		
 	else:
 		try:
 			if(msg['reply_to_message'] != None):
@@ -114,16 +113,6 @@ def handle(msg):
 		elif user_command.get(ctext):
 			user_command[ctext]()
 
-
-######### é teporario, em breve tera uma func ##########
-	now = datetime.now()
-	if now.hour == 20 and now.minute == 47:
-		inst_command_user.verify_book()
-		time.sleep(65)
-	else:
-		pass
-################################3#######################
-
 if __name__ == '__main__':
 	MessageLoop(bot, handle).run_as_thread()
 	schedule.every().monday.at('07:00').do(msgDia)
@@ -132,19 +121,3 @@ if __name__ == '__main__':
 while True:
 	schedule.run_pending()
 	sleep(100)
-=======
-	use_bot = control(msg, bot)
-
-	use_bot.log()
-	use_bot.commands()
-	use_bot.goodbye()
-	use_bot.rules()
-	use_bot.link()
-	use_bot.welcome()
-	use_bot.add()
-
-bot.message_loop(handle)
-
-while 1:
-	pass
->>>>>>> c819ea2132911c3ae97e1bae9ac146948221ae5f
