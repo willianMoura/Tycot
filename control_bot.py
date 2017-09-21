@@ -1,20 +1,41 @@
 import telepot
 import logging
 import sql
-from datetime import datetime
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 class control:
-
-	day_date_hour = datetime.now().strftime('%c')
-
-
 	def __init__(self, msg, bot):
-
-		try:
-			self.bot = bot
+		self.bot = bot
+		if msg.get('data'):
+			self.query_id, self.from_id, self.query_data = telepot.glance(
+				msg, flavor='callback_query')
+			self.chat_id = msg['message']['chat']['id']
+			self.chat_type = msg['message']['chat']['type']
+			self.UserID = msg['from']['id']
 			self.msg = msg
+<<<<<<< HEAD
+		else:
+			self.content_type, self.chat_type, self.chat_id = telepot.glance(
+				msg)
+			self.msg_id = msg['message_id']
+
+		if 'username' in msg['from']:
+			self.username = msg['from']['username']
+		else:
+			self.username = '[Sem username]'
+		self.user = msg['from']['first_name']
+		self.UserID = msg['from']['id']
+		self.msg = msg
+
+
+	def get_admin_list(self, query=False, user_reply=False):
+		admin = self.bot.getChatAdministrators(self.chat_id)
+		AdminID_list = [adminID['user']['id'] for adminID in admin]
+
+		if user_reply:
+			return AdminID_list
+=======
 			if 'username' in msg['from']:
 				self.user = msg['from']['username']
 			else:
@@ -318,11 +339,24 @@ class control:
 			user_first_name = str(self.msg['new_chat_member']['first_name'])
 			get_bot_name = self.bot.getMe()
 			bot_name = get_bot_name['first_name']
+>>>>>>> c819ea2132911c3ae97e1bae9ac146948221ae5f
 
-			if(user_first_name == bot_name):
-				self.bot.sendMessage(self.chat_id, 'Olá, sou o Tycot!')
-				sql.criar_table(self.chat_id)
+		elif query:
+			if self.UserID in AdminID_list:
+				return True
 			else:
+<<<<<<< HEAD
+				self.bot.answerCallbackQuery(
+					callback_query_id=self.query_id,
+					text='Você não esta permitido a usar esse botão!',
+					show_alert=False,
+					cache_time=1
+				)
+			return False
+
+		elif self.UserID in AdminID_list:
+			return True
+=======
 				try:
 					with open('.tmp/welcome' + str(self.chat_id) + '.txt', 'r') as welcome:
 						welcome = welcome.read()
@@ -349,5 +383,12 @@ class control:
 
 		if sql.procurar(self.chat_id, self.msg['from']['id']) == 'erro ao procurar':
 			sql.inserir(self.chat_id, self.msg['from']['id'])
+>>>>>>> c819ea2132911c3ae97e1bae9ac146948221ae5f
 		else:
-			pass
+			self.bot.sendMessage(
+				chat_id=self.chat_id,
+				parse_mode='HTML',
+				text='<b>Apenas administradores podem usar este comando.</b>',
+				reply_to_message_id=self.msg_id
+			)
+			return False
