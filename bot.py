@@ -6,6 +6,8 @@ from bot_command import *
 from time import time, sleep
 from datetime import date
 from keyboard import keyboard
+from datetime import datetime
+import time
 try:
 	import schedule
 except:
@@ -112,6 +114,13 @@ def handle(msg):
 
 		elif user_command.get(ctext):
 			user_command[ctext]()
+	###temporario###
+	now = datetime.now()
+	if now.hour == 21 and now.minute == 24:
+		inst_command_user.verify_book()
+		time.sleep(65)
+	else:
+		pass
 
 if __name__ == '__main__':
 	MessageLoop(bot, handle).run_as_thread()
