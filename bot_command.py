@@ -214,16 +214,81 @@ class command_user(control, keyboard):
 		book_title = soup.find('div', class_='dotd-title').h2.text
 		return book_url_image.attrs['src'], book_title.strip(), packt
 
-	def verify_book(self):
+	def verify_book(self, opt):
 		book_url_image, book_title, packt_url = self.book_info()
-		self.bot.sendPhoto(
-			self.UserID,
-			'http:{}'.format(book_url_image),
-			'{}:{}'.format(
-				book_title,
-				packt_url
+		if opt == 'pv':
+			self.bot.sendPhoto(
+				self.UserID,
+				'http:{}'.format(book_url_image),
+				'{}:{}'.format(
+					book_title,
+					packt_url
+				)
 			)
-		)
+		else:
+			self.bot.sendPhoto(
+                                self.chat_id,
+                                'http:{}'.format(book_url_image),
+                                '{}:{}'.format(
+                                        book_title,
+                                        packt_url
+                                )
+                        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class command_admin(control, keyboard):
 	@admin

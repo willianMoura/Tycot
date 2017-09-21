@@ -47,7 +47,7 @@ def handle(msg):
 		elif msgDataSplit[0] == 'alerta':
 			inst_command_user.enviarAlerta(chat_id=msgDataSplit[1], data=msgDataSplit[2], usuario=msgDataSplit[3])
 		elif msgDataSplit[0] == 'sugestao':
-			inst_command_user.verify_book()	
+			inst_command_user.verify_book('pv')	
 		else:
 			pass
 		
@@ -116,8 +116,8 @@ def handle(msg):
 			user_command[ctext]()
 	###temporario###
 	now = datetime.now()
-	if now.hour == 21 and now.minute == 24:
-		inst_command_user.verify_book()
+	if now.hour == 21 and now.minute == 33:
+		inst_command_user.verify_book('gp')
 		time.sleep(65)
 	else:
 		pass
