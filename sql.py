@@ -16,7 +16,7 @@ def criar_table(table):
 	conn = sqlite3.connect(db)
 	cursor = conn.cursor()
 	try:
-		cursor.execute("""CREATE TABLE IF NOT EXISTS {}(nome VARCHAR(50) NOT NULL, advs INT NOT NULL DEFAULT 0, Id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INT, alert INT DEFAULT 0);""".format(str(table).replace('-', 'T')))
+		cursor.execute("""CREATE TABLE IF NOT EXISTS {}(nome VARCHAR(50) NOT NULL, advs INT NOT NULL DEFAULT 0, Id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INT, alert INT DEFAULT 0, msg INT DEFAULT 0);""".format(str(table).replace('-', 'T')))
 		conn.commit()
 		return 'Table {} criado'.format(str(table).replace('-', 'T'))
 	except:
@@ -30,9 +30,9 @@ def alterar_table(table):
 	try:
 		cursor.execute("ALTER TABLE {} RENAME TO sqlitestudio_temp_table;".format(str(table)))
 		conn.commit()
-		cursor.execute("CREATE TABLE {} (nome VARCHAR (50) NOT NULL, advs INT NOT NULL DEFAULT 0, Id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INT, alert INT DEFAULT 0);".format(str(table)))
+		cursor.execute("CREATE TABLE {} (nome VARCHAR (50) NOT NULL, advs INT NOT NULL DEFAULT 0, Id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INT, alert INT DEFAULT 0, msg INT DEFAULT 0);".format(str(table)))
 		conn.commit()
-		cursor.execute("INSERT INTO {} (nome, advs) SELECT nome, advs FROM sqlitestudio_temp_table;".format(str(table)))
+		cursor.execute("INSERT INTO {} (nome, advs, msg) SELECT nome, advs, msg FROM sqlitestudio_temp_table;".format(str(table)))
 		conn.commit()
 		cursor.execute("DROP TABLE sqlitestudio_temp_table;")
 		conn.commit()
@@ -63,12 +63,12 @@ def inserir(table, nome, user_id):
 def mostrar(table):
 	conn = sqlite3.connect(db)
 	cursor = conn.cursor()
-	resposta = ''
+	resposta = []
 	try:
 		cursor.execute('SELECT * FROM {} ORDER BY nome;'.format(table))
 		for user in cursor.fetchall():
-			nome = user[0]
-			resposta += '\n|--{}'.format(nome)
+			nome = user[3]
+			resposta.append(nome)
 		resposta += '\n'
 		return resposta
 	except:
@@ -178,3 +178,27 @@ def tabelas():
 	except:
 		return 'erro ao achar tabelas'
 	conn.close()
+
+
+def menssagens(table, user_id):
+	conn = sqlite3.connect(db)
+	cursor = conn.cursor()
+	try:
+		msgs = procurar(table, user_id)[4]
+		msgs += 1
+		cursor.execute("""UPDATE {} SET msg = {} WHERE user_id = {};""".format(str(table).replace('-', 'T'), msgs, user_id))
+		conn.commit()
+		return 'alterado'
+	except:
+		return 'erro ao alterar'
+	conn.close
+
+
+
+
+
+
+print(criar_table('teste'))
+print(inserir('teste', 'willian', 11))
+print(inserir('teste', 'dani', -12))
+print(mostrar('teste'))

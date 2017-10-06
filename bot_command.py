@@ -359,7 +359,7 @@ class command_admin(control, keyboard):
 				self.msg['from']['first_name'],
 				self.msg['from']['id'])
 		else:
-			pass
+			sql.menssagens(self.chat_id, self.msg['from']['id'])
 
 	@admin
 	@log
@@ -385,3 +385,12 @@ class command_admin(control, keyboard):
 			'As mensagens de boas-vindas foram alteradas com sucesso!',
 			reply_to_message_id=self.msg_id
 		)
+
+	def inativos(self):
+		now = datetime.now()
+		if now.hour == 23 and now.minute == 59:
+			for x in sql.mostrar(self.chat_id):
+				id = x
+				msgs = sql.procurar(self.chat_id, id)[4]
+				if msg < 20:
+					self.bot.kickChatMember(self.chat_id, id)
